@@ -5,19 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fff6df">
 <title>LYRIC ROULETTE</title>
+
 <style>
 *{box-sizing:border-box}
+
 body{
   margin:0;
   background:#fff6df;
   color:#111;
   font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif
 }
+
 .wrap{
   max-width:680px;
   margin:auto;
   padding:22px 16px 40px
 }
+
 h1{
   font-size:34px;
   line-height:1;
@@ -25,10 +29,12 @@ h1{
   font-weight:950;
   letter-spacing:-1px
 }
+
 .sub{
   font-weight:800;
   margin-bottom:18px
 }
+
 .card{
   background:#fff;
   border:4px solid #111;
@@ -36,10 +42,12 @@ h1{
   box-shadow:7px 7px 0 #111;
   padding:16px
 }
+
 .reels{
   display:grid;
   gap:12px
 }
+
 .reel{
   position:relative;
   overflow:hidden;
@@ -48,15 +56,19 @@ h1{
   border-radius:18px;
   background:#fff
 }
+
 .reel:nth-child(1){
   background:#ff4d5a
 }
+
 .reel:nth-child(2){
   background:#3185ff
 }
+
 .reel:nth-child(3){
   background:#ffd83d
 }
+
 .track{
   height:100%;
   display:flex;
@@ -68,20 +80,24 @@ h1{
   text-align:center;
   word-break:break-word
 }
+
 .spin{
   animation:shake .09s linear infinite
 }
+
 @keyframes shake{
   0%{transform:translateY(0)}
   50%{transform:translateY(-4px)}
   100%{transform:translateY(3px)}
 }
+
 .buttons{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:9px;
   margin-top:13px
 }
+
 .stop{
   border:4px solid #111;
   border-radius:15px;
@@ -91,27 +107,35 @@ h1{
   font-weight:950;
   box-shadow:3px 3px 0 #111
 }
+
+/* STOPボタンの文字色 */
 #b0{
   color:#ff4d5a;
 }
+
 #b1{
-  color:#ffd83d;
-}
-#b2{
   color:#3185ff;
 }
+
+#b2{
+  color:#ffd83d;
+}
+
 .stop:active{
   transform:translate(2px,2px);
   box-shadow:1px 1px 0 #111
 }
+
 .stop[disabled]{
   opacity:.35
 }
+
 .actions{
   display:flex;
   gap:10px;
   margin-top:13px
 }
+
 .action{
   flex:1;
   border:4px solid #111;
@@ -122,10 +146,13 @@ h1{
   font-size:16px;
   font-weight:950
 }
+
+/* REPLAYを薄紫に */
 .action.yellow{
   background:#c9b8f5;
   color:#111
 }
+
 details{
   margin-top:22px;
   border:4px solid #111;
@@ -133,18 +160,22 @@ details{
   background:#fff;
   padding:12px
 }
+
 summary{
   font-weight:950;
   cursor:pointer
 }
+
 .editor{
   display:grid;
   gap:12px;
   margin-top:12px
 }
+
 label{
   font-weight:950
 }
+
 textarea{
   width:100%;
   height:150px;
@@ -154,271 +185,575 @@ textarea{
   font:14px/1.6 inherit;
   resize:vertical
 }
+
 .note{
   font-size:12px;
   font-weight:700;
   opacity:.7;
   margin-top:8px
 }
+
 @media(min-width:560px){
   .track{
     font-size:24px
   }
+
   .reel{
     height:84px
   }
 }
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
+
   <h1>LYRIC ROULETTE</h1>
+
   <div class="sub">
     3つの言葉を、目押しでそろえろ。
   </div>
+
   <div class="card">
+
     <div class="reels">
+
       <div class="reel">
         <div class="track" id="r0">READY?</div>
       </div>
+
       <div class="reel">
         <div class="track" id="r1">READY?</div>
       </div>
+
       <div class="reel">
         <div class="track" id="r2">READY?</div>
       </div>
+
     </div>
+
     <div class="buttons">
+
       <button class="stop" id="b0">
         STOP ①
       </button>
+
       <button class="stop" id="b1">
         STOP ②
       </button>
+
       <button class="stop" id="b2">
         STOP ③
       </button>
+
     </div>
+
     <div class="actions">
+
       <button class="action yellow" id="replay">
         REPLAY
       </button>
+
       <button class="action" id="reset">
         PHRASES RESET
       </button>
+
     </div>
+
   </div>
+
+
   <details>
+
     <summary>
       歌詞候補を編集する
     </summary>
+
     <div class="editor">
+
       <div>
         <label>① 上段</label>
         <textarea id="e0"></textarea>
       </div>
+
       <div>
         <label>② 中段</label>
         <textarea id="e1"></textarea>
       </div>
+
       <div>
         <label>③ 下段</label>
         <textarea id="e2"></textarea>
       </div>
+
     </div>
+
     <div class="note">
       1行につき1フレーズ。変更後は「REPLAY」で反映されます。
     </div>
+
   </details>
+
 </div>
+
+
 <script>
 "use strict";
+
+
 const DEFAULTS = [
   [
-    "後悔するなら","いつの間にか","ジリジリと","頼れる","共に観る",
-    "今だから思えるよ","どれだけの強さで","ありったけの","広がる","痛みを",
-    "オレは光速で","理性が崩れる音、聞きたいなら","ディストピアめいた秩序に",
-    "グッと","ビビってんなら","始めようぜ","声出せもっと！","その","なら",
-    "この世に生まれた時点で","今こそ","ヒーローは","僕が","鮮やかに","僕の",
-    "君への想いは","ねぇ","本当は","リボン掛けてみたって","抱きしめて",
-    "嫌なことは","傷ついたプライドを","答えは","世界は","忍耐とか問題とか",
-    "フキゲンに尖らす","ホラちょっと","ウルトラマリンが","夢は","いつかは",
-    "ヨコシマな","ブラウスの","生麦生米生卵","ほらだんだん",
-    "足りないよ 足りないよ","包み隠さず言うよ","ラストチャンスだ",
-    "反撃の狼煙を","予言者や占い師を","らしくないことなんて",
-    "どれだけオレがヤバイかを","磨き上げた","愛を","たどり着く",
-    "心配すんなって","グラりフラり","その悲しみも","グダグダの",
-    "この両手がここにある意味を","ネガティヴな","慣れた顔が","それで"
+    "後悔するなら",
+    "いつの間にか",
+    "ジリジリと",
+    "頼れる",
+    "共に観る",
+    "今だから思えるよ",
+    "どれだけの強さで",
+    "ありったけの",
+    "広がる",
+    "痛みを",
+    "オレは光速で",
+    "理性が崩れる音、聞きたいなら",
+    "ディストピアめいた秩序に",
+    "グッと",
+    "ビビってんなら",
+    "始めようぜ",
+    "声出せもっと！",
+    "その",
+    "なら",
+    "この世に生まれた時点で",
+    "今こそ",
+    "ヒーローは",
+    "僕が",
+    "鮮やかに",
+    "僕の",
+    "君への想いは",
+    "ねぇ",
+    "本当は",
+    "リボン掛けてみたって",
+    "抱きしめて",
+    "嫌なことは",
+    "傷ついたプライドを",
+    "答えは",
+    "世界は",
+    "忍耐とか問題とか",
+    "フキゲンに尖らす",
+    "ホラちょっと",
+    "ウルトラマリンが",
+    "夢は",
+    "いつかは",
+    "ヨコシマな",
+    "ブラウスの",
+    "生麦生米生卵",
+    "ほらだんだん",
+    "足りないよ 足りないよ",
+    "包み隠さず言うよ",
+    "ラストチャンスだ",
+    "反撃の狼煙を",
+    "予言者や占い師を",
+    "らしくないことなんて",
+    "どれだけオレがヤバイかを",
+    "磨き上げた",
+    "愛を",
+    "たどり着く",
+    "心配すんなって",
+    "グラりフラり",
+    "その悲しみも",
+    "グダグダの",
+    "この両手がここにある意味を",
+    "ネガティヴな",
+    "慣れた顔が",
+    "それで"
   ],
+
   [
-    "まず","共に","今","そう仲間が","ビジョンは","この出会いはそう",
-    "君の手を","愛を伝えたいけど","大海原の","強さに","1億",
-    "オレが今すぐに","中指立て","グッと","泣いて","Addictive love",
-    "こんなモンじゃねぇ","口は","摂取1000°Cまで","既に","たっぷり",
-    "遅れて来る","世界を","時代が","生きる意味","迷わず","僕だけの",
-    "不器用な","君の輝きに","細い背中が","何もかも","今","NOだと","青くて",
-    "聞き飽きたセリフに","唇は","今ちょっと","イイ感じ","夢のままで",
-    "君の事","思春期と","中が","そんなこと言えなくても","黄色に染める",
-    "恋の覚悟が","今君の全てが","白旗を揚げるなら","今","横目で","とうに",
-    "特別に","Six pack","オレを","今が","いつだって","屋上で","俺に",
-    "自分を","腕の中から","思考は","横にいる","いい"
+    "まず",
+    "共に",
+    "今",
+    "そう仲間が",
+    "ビジョンは",
+    "この出会いはそう",
+    "君の手を",
+    "愛を伝えたいけど",
+    "大海原の",
+    "強さに",
+    "1億",
+    "オレが今すぐに",
+    "中指立て",
+    "グッと",
+    "泣いて",
+    "Addictive love",
+    "こんなモンじゃねぇ",
+    "口は",
+    "摂取1000°Cまで",
+    "既に",
+    "たっぷり",
+    "遅れて来る",
+    "世界を",
+    "時代が",
+    "生きる意味",
+    "迷わず",
+    "僕だけの",
+    "不器用な",
+    "君の輝きに",
+    "細い背中が",
+    "何もかも",
+    "今",
+    "NOだと",
+    "青くて",
+    "聞き飽きたセリフに",
+    "唇は",
+    "今ちょっと",
+    "イイ感じ",
+    "夢のままで",
+    "君の事",
+    "思春期と",
+    "中が",
+    "そんなこと言えなくても",
+    "黄色に染める",
+    "恋の覚悟が",
+    "今君の全てが",
+    "白旗を揚げるなら",
+    "今",
+    "横目で",
+    "とうに",
+    "特別に",
+    "Six pack",
+    "オレを",
+    "今が",
+    "いつだって",
+    "屋上で",
+    "俺に",
+    "自分を",
+    "腕の中から",
+    "思考は",
+    "横にいる",
+    "いい"
   ],
+
   [
-    "やりな","歩いてる","熱くなってるよ","いるから","大きくなっていく",
-    "Destiny","取ればいい？","わからないんだよ","エニグマ","変えて",
-    "落とせるオトコ","きかせてやる","kissしな","逝かせてやる","OK",
-    "Ah～！！！","そうだろ？","飾りか？","上げてやるだけ","完成されていたんだ",
-    "教えてやろう","そういうシナリオさ","動かす","色を変える","見つけたんだ",
-    "誓えるはずさ","princessでいて","ただの男なのさ","敵いはしないけど",
-    "しなるくらいに","置いておいで","守るために戦う","解るだろ","デカいだろ？",
-    "お見舞いしてやれ！","塞いじゃってイイの？","揺れたでしょ？","Sexyなオレ",
-    "終わらせない","トリコにしちゃうのさ","ブラウス","見てみたい","イイじゃん",
-    "それは簡単","足りないよ","欲しいよ","今","掲げて","笑い飛ばそうぜ",
-    "解ってる…","イチから教えてやるよ","見てみろよ","こぞって求めな",
-    "一番だよね","一緒だから","fence","あずけてみたらどう？","蹴り上げて",
-    "教えてくれた","邪魔だね","そんなのも悪くない","わけないだろ"
+    "やりな",
+    "歩いてる",
+    "熱くなってるよ",
+    "いるから",
+    "大きくなっていく",
+    "Destiny",
+    "取ればいい？",
+    "わからないんだよ",
+    "エニグマ",
+    "変えて",
+    "落とせるオトコ",
+    "きかせてやる",
+    "kissしな",
+    "逝かせてやる",
+    "OK",
+    "Ah～！！！",
+    "そうだろ？",
+    "飾りか？",
+    "上げてやるだけ",
+    "完成されていたんだ",
+    "教えてやろう",
+    "そういうシナリオさ",
+    "動かす",
+    "色を変える",
+    "見つけたんだ",
+    "誓えるはずさ",
+    "princessでいて",
+    "ただの男なのさ",
+    "敵いはしないけど",
+    "しなるくらいに",
+    "置いておいで",
+    "守るために戦う",
+    "解るだろ",
+    "デカいだろ？",
+    "お見舞いしてやれ！",
+    "塞いじゃってイイの？",
+    "揺れたでしょ？",
+    "Sexyなオレ",
+    "終わらせない",
+    "トリコにしちゃうのさ",
+    "ブラウス",
+    "見てみたい",
+    "イイじゃん",
+    "それは簡単",
+    "足りないよ",
+    "欲しいよ",
+    "今",
+    "掲げて",
+    "笑い飛ばそうぜ",
+    "解ってる…",
+    "イチから教えてやるよ",
+    "見てみろよ",
+    "こぞって求めな",
+    "一番だよね",
+    "一緒だから",
+    "fence",
+    "あずけてみたらどう？",
+    "蹴り上げて",
+    "教えてくれた",
+    "邪魔だね",
+    "そんなのも悪くない",
+    "わけないだろ"
   ]
 ];
+
+
 const KEY = "lyricRoulette_v4";
+
+
 let phrases = JSON.parse(JSON.stringify(DEFAULTS));
+
 let selected = [0,0,0];
+
 let stopped = [false,false,false];
+
 let timers = [null,null,null];
+
+
 const $ = id => document.getElementById(id);
+
+
 function loadSaved(){
+
   try{
+
     const raw = localStorage.getItem(KEY);
+
     if(raw){
+
       const x = JSON.parse(raw);
+
       if(
         Array.isArray(x) &&
         x.length === 3 &&
         x.every(a => Array.isArray(a) && a.length)
       ){
+
         phrases = x.map((saved,i)=>{
+
           const merged =
             Array.isArray(saved)
             ? saved.slice()
             : [];
+
           for(const phrase of DEFAULTS[i]){
+
             if(!merged.includes(phrase)){
               merged.push(phrase);
             }
+
           }
+
           return merged.filter(Boolean);
+
         });
+
         save();
+
         return;
+
       }
+
     }
+
   }catch(e){}
-  phrases = JSON.parse(JSON.stringify(DEFAULTS));
+
+  phrases =
+    JSON.parse(
+      JSON.stringify(DEFAULTS)
+    );
 }
+
+
 function save(){
+
   try{
-    localStorage.setItem(KEY,JSON.stringify(phrases));
+
+    localStorage.setItem(
+      KEY,
+      JSON.stringify(phrases)
+    );
+
   }catch(e){}
+
 }
+
+
 function fillEditors(){
+
   for(let i=0;i<3;i++){
-    $("e"+i).value = phrases[i].join("\n");
+
+    $("e"+i).value =
+      phrases[i].join("\n");
+
   }
+
 }
+
+
 function readEditors(){
+
   for(let i=0;i<3;i++){
+
     const a =
       $("e"+i)
       .value
       .split(/\r?\n/)
       .map(s=>s.trim())
       .filter(Boolean);
+
     if(a.length){
       phrases[i] = a;
     }
+
   }
+
   save();
+
 }
+
+
 function show(i){
+
   $("r"+i).textContent =
     phrases[i][selected[i]];
+
 }
+
+
 function setButtons(){
+
   for(let i=0;i<3;i++){
+
     $("b"+i).disabled =
       stopped[i];
+
   }
+
 }
+
+
 function start(){
+
   readEditors();
+
   for(let i=0;i<3;i++){
+
     stopped[i] = false;
+
     selected[i] =
       Math.floor(
         Math.random() *
         phrases[i].length
       );
+
     show(i);
+
     $("r"+i)
       .classList
       .add("spin");
+
     clearInterval(timers[i]);
+
     timers[i] =
       setInterval(()=>{
+
         selected[i] =
           (selected[i]+1) %
           phrases[i].length;
+
         show(i);
+
       },65+i*12);
+
   }
+
   setButtons();
+
 }
+
+
 function stop(i){
+
   if(stopped[i]) return;
+
   stopped[i] = true;
+
   clearInterval(timers[i]);
+
   $("r"+i)
     .classList
     .remove("spin");
+
   selected[i] =
     Math.floor(
       Math.random() *
       phrases[i].length
     );
+
   show(i);
+
   setButtons();
+
 }
+
+
 function resetPhrases(){
+
   phrases =
     JSON.parse(
       JSON.stringify(DEFAULTS)
     );
+
   fillEditors();
+
   save();
+
   start();
+
 }
-$("b0").addEventListener(
-  "click",
-  ()=>stop(0)
-);
-$("b1").addEventListener(
-  "click",
-  ()=>stop(1)
-);
-$("b2").addEventListener(
-  "click",
-  ()=>stop(2)
-);
-$("replay").addEventListener(
-  "click",
-  start
-);
-$("reset").addEventListener(
-  "click",
-  resetPhrases
-);
+
+
+$("b0")
+  .addEventListener(
+    "click",
+    ()=>stop(0)
+  );
+
+$("b1")
+  .addEventListener(
+    "click",
+    ()=>stop(1)
+  );
+
+$("b2")
+  .addEventListener(
+    "click",
+    ()=>stop(2)
+  );
+
+$("replay")
+  .addEventListener(
+    "click",
+    start
+  );
+
+$("reset")
+  .addEventListener(
+    "click",
+    resetPhrases
+  );
+
+
 loadSaved();
+
 fillEditors();
+
 start();
+
 </script>
+
 </body>
 </html>
